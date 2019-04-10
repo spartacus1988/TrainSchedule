@@ -1,5 +1,6 @@
 import logging
-import sqlite3
+#import sqlite3
+from initializer.cities import CitiesInitializer
 
 class Initializer:
 
@@ -12,7 +13,7 @@ class Initializer:
         self.logger = logging.getLogger("Initializer")
         self.logger.info("Initializing Initializer...")
 
-      
+        CitiesInitializer()
 
 
         self.logger.info("Initializer is initialized")

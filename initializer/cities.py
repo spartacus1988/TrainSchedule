@@ -2,10 +2,10 @@ import sqlite3
 
 class CitiesInitializer:
 
-	 def __init__(self):
-	 	self.conn = sqlite3.connect("TrainSchedule.db")
-        self.cursor = conn.cursor()
-        self.cursor.execute("DROP TABLE IF EXISTS cities")
+	def __init__(self):
+		self.conn = sqlite3.connect("TrainSchedule.db")
+		self.cursor = self.conn.cursor()
+		self.cursor.execute("DROP TABLE IF EXISTS cities")
 		self.cursor.execute("""CREATE TABLE IF NOT EXISTS 
 							cities (city_id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE ON CONFLICT REPLACE, 
 									city_name TEXT NOT NULL UNIQUE);""")
