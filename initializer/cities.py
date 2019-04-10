@@ -55,7 +55,7 @@ class CitiesInitializer:
 									   second_neighbor INTEGER,
 									   third_neighbor INTEGER);""")
 		neighbors = [(1, 11, 2, 12),
-					(2, 1, 3, 4),
+					(2, 1, 3, 5),
 					(3, 2, None, None),
 					(4, 5, 6, None),
 					(5, 4, 2, None),
@@ -76,7 +76,7 @@ class CitiesInitializer:
 					(20, 21, 6, None),
 					(21, 20, 22, None),
 					(22, 21, 23, None),
-					(23, 24, 29, 22),
+					(23, 24, 28, 22),
 					(24, 25, 23, None),
 					(25, 24, 26, None),
 					(26, 25, None, None),
