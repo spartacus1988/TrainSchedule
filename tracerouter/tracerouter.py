@@ -1,7 +1,7 @@
 import logging
-from initializer.cities import CitiesInitializer
+from tracerouter.wave_algo import Router
 
-class Initializer:
+class Tracerouter:
 
     def __init__(self):
         logging.basicConfig(filename="TrainSchedule.log",
@@ -9,11 +9,11 @@ class Initializer:
                             datefmt='%m/%d/%Y %I:%M:%S %p',
                             filemode='w',
                             level=logging.INFO)
-        self.logger = logging.getLogger("Initializer")
-        self.logger.info("Initializing Initializer...")
+        self.logger = logging.getLogger("Tracerouter")
+        self.logger.info("Tracerouter start...")
 
-        CitiesInitializer()
+        Router()
 
 
-        self.logger.info("Initializer is initialized")
+        self.logger.info("Tracerouter finished")
 
