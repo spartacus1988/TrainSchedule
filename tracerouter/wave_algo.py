@@ -1,5 +1,7 @@
 import sqlite3
 import networkx as nx
+#import matplotlib
+import matplotlib.pyplot as plt
 
 class Router:
 
@@ -86,7 +88,8 @@ class Router:
 		G.add_edge('Krasnyy Kholm', 'Vesegonsk', weight=1)
 
 
-		pass
+		nx.draw_networkx(G)
+		plt.show()
 		
 
 
