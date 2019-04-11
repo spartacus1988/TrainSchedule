@@ -12,8 +12,11 @@ class Tracerouter:
         self.logger = logging.getLogger("Tracerouter")
         self.logger.info("Tracerouter start...")
 
-        router = Router(Graph)
-
+        self.router = Router(Graph)
 
         self.logger.info("Tracerouter finished")
+
+    def route(self, startPoint, endPoint):
+        self.router.route(startPoint, endPoint)
+
 

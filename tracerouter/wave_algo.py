@@ -9,13 +9,10 @@ class Router:
 		self.G = Graph
 		self.conn = sqlite3.connect("TrainSchedule.db")
 		self.cursor = self.conn.cursor()
-		self.route()
+		#self.route()
 
-	def route(self):
-			
-		shortest_path = nx.shortest_path(self.G, 'Torzhok', 'Kalyazin')
+	def route(self, startPoint, endPoint):		
+		shortest_path = nx.shortest_path(self.G, startPoint, endPoint)
 		print(shortest_path)
 
-		shortest_path = nx.shortest_path(self.G, 'Zap Dvina', 'Sonkovo')
-		print(shortest_path)
 
