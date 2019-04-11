@@ -12,7 +12,8 @@ class Initializer:
         self.logger = logging.getLogger("Initializer")
         self.logger.info("Initializing Initializer...")
 
-        CitiesInitializer()
+        citiesInitializer = CitiesInitializer()
+        self.G = citiesInitializer.G
 
 
         self.logger.info("Initializer is initialized")

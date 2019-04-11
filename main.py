@@ -5,5 +5,6 @@ from tracerouter.tracerouter import Tracerouter
 
 if __name__ == '__main__':
 
-	Initializer()
-	Tracerouter()
+	initializer = Initializer()
+	Graph = initializer.G
+	tracerouter = Tracerouter(Graph)
