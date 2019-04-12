@@ -31,9 +31,16 @@ class DBrouter:
         rows = self.cursor.fetchall() 
         return rows
 
+    def get_route_by_route_id(self, route_id):
+        self.cursor.execute("SELECT * FROM routes WHERE route_id = " + route_id)
+        route = self.cursor.fetchall() 
+        #print("route is " + str(route))
+        return route
+
 
 
     def save(self, routeNumber, startPoint, endPoint, startTime, endTime):
+        print("routeNumber is " + str(routeNumber))
         self.cursor.execute("INSERT OR REPLACE INTO routes VALUES(?, ?, ?, ?, ?)", (routeNumber, startPoint, endPoint, startTime, endTime))
         self.conn.commit()
 

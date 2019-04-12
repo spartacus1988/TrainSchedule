@@ -80,12 +80,57 @@ class MyWindow(Gtk.Window):
 		self.buttonSave.connect("clicked", self.on_buttonSave_clicked)
 		self.hboxButton.pack_start(self.buttonSave, True, True, 0)
 
+		self.buttonAdd = Gtk.Button(label="Add new")
+		self.buttonAdd.connect("clicked", self.on_buttonAdd_clicked)
+		self.hboxButton.pack_start(self.buttonAdd, True, True, 0)
+
 		self.buttonRemove = Gtk.Button(label="Remove")
 		self.buttonRemove.connect("clicked", self.on_buttonRemove_clicked)
 		self.hboxButton.pack_start(self.buttonRemove, True, True, 0)
 
 	def on_buttonSave_clicked(self, widget):
 		print("Saving...")
+		
+		left_city, right_city, shortest_path, start_time, end_time = self.calculate_data()
+
+		if left_city != right_city:		
+			end_iter = self.textbuffer.get_end_iter()
+			if self.route is None and len(self.route_store) == 0:
+				self.textbuffer.insert(end_iter, "Please select a route\r\n")
+			elif self.route is None and len(self.route_store) > 0:
+				print("len of self.route_store is " + str(len(self.route_store)))
+				print("self.route is " + str(self.route))
+				self.textbuffer.insert(end_iter, "Please select a route\r\n")
+			else:
+				self.dbrouter.save(int(self.route), left_city, right_city, start_time, end_time)			
+				self.textbuffer.insert(end_iter, "New route from " + left_city +
+				" to " + right_city + " departure at " + start_time + 
+				" arrival at " + end_time + " was added to databse\r\n")
+
+	def on_buttonAdd_clicked(self, widget):
+		print("Adding...")
+		
+		left_city, right_city, shortest_path, start_time, end_time = self.calculate_data()
+
+		if left_city != right_city:		
+			end_iter = self.textbuffer.get_end_iter()
+			if self.route is None and len(self.route_store) == 0:
+				#print("len of self.route_store is " + str(len(self.route_store)))
+				self.route = 1
+				self.route_store.append([str(1)])
+				self.route_combo.set_active(0)
+				self.dbrouter.save(int(self.route), left_city, right_city, start_time, end_time)			
+				self.textbuffer.insert(end_iter, "New route from " + left_city +
+				" to " + right_city + " departure at " + start_time + 
+				" arrival at " + end_time + " was added to databse\r\n")
+			else:
+				self.dbrouter.save(len(self.route_store)+1, left_city, right_city, start_time, end_time)
+				self.route_store.append([str(len(self.route_store)+1)])			
+				self.textbuffer.insert(end_iter, "New route from " + left_city +
+				" to " + right_city + " departure at " + start_time + 
+				" arrival at " + end_time + " was added to databse\r\n")
+
+	def calculate_data(self):
 		left_tree_iter = self.city_combo_left.get_active_iter()
 		if left_tree_iter is not None:
 			left_model = self.city_combo_left.get_model()
@@ -99,30 +144,12 @@ class MyWindow(Gtk.Window):
 		print("Selected: right city=%s" % right_city)
 
 		shortest_path = self.tracerouter.route(left_city, right_city)
-		time = datetime.datetime.now()
-		time = time.strftime("%H:%M")
+		start_time = datetime.datetime.now()
+		start_time = start_time.strftime("%H:%M")
+		end_time = datetime.datetime.now()
+		end_time = end_time.strftime("%H:%M")
 
-
-		if left_city != right_city:		
-			end_iter = self.textbuffer.get_end_iter()
-			if self.route is None and len(self.route_store) == 0:
-				#print("len of self.route_store is " + str(len(self.route_store)))
-				self.route = 1
-				self.route_store.append([str(1)])
-				self.route_combo.set_active(0)
-				self.dbrouter.save(int(self.route), left_city, right_city, time, time)			
-				self.textbuffer.insert(end_iter, "New route from " + left_city +
-				" to " + right_city + " departure at " + time + 
-				" arrival at " + time + " was added to databse\r\n")
-			elif self.route is None and len(self.route_store) > 0:
-				print("len of self.route_store is " + str(len(self.route_store)))
-				print("self.route is " + str(self.route))
-				self.textbuffer.insert(end_iter, "Please select a route\r\n")
-			else:
-				self.dbrouter.save(int(self.route), left_city, right_city, time, time)			
-				self.textbuffer.insert(end_iter, "New route from " + left_city +
-				" to " + right_city + " departure at " + time + 
-				" arrival at " + time + " was added to databse\r\n")
+		return left_city, right_city, shortest_path, start_time, end_time
 
 
 
@@ -139,13 +166,40 @@ class MyWindow(Gtk.Window):
 
 	def on_route_combo_changed(self, combo):
 		print("route_combo was changed!!!")
+		#print("self.route is " + str(self.route))
 		tree_iter = combo.get_active_iter()
 		if tree_iter is not None:
 			model = combo.get_model()
 			self.route = model[tree_iter][0]
+			#print("self.route is " + str(self.route))
+			
+
+			city_number_left, city_number_right = self.get_city_number_by_route_id(self.route)
+			print("city_number_left is " + str(city_number_left))
+			print("city_number_right is " + str(city_number_right))
+
+			self.city_combo_left.set_active(city_number_left-1)
+			self.city_combo_right.set_active(city_number_right-1)
 
 
-		#!	
+	def get_city_number_by_route_id(self, route_id):
+		route = self.dbrouter.get_route_by_route_id(route_id)
+		#print("route is " + str(route))
+		route_id, left_city, right_city, start_time,  end_time = route[0]
+		#print("left_city is " + str(left_city))
+
+		self.cursor.execute("SELECT * FROM cities WHERE city_name = '" + str(left_city) + "' ")
+		city_list = self.cursor.fetchall() 
+		city_number_left, city_name_left = city_list[0]
+		#print("city_number_left is " + str(city_number_left))
+
+		self.cursor.execute("SELECT * FROM cities WHERE city_name = '" + str(right_city) + "' ")
+		city_list = self.cursor.fetchall() 
+		city_number_right, city_name_right = city_list[0]
+		#print("city_number_right is " + str(city_number_right))
+
+		return city_number_left, city_number_right
+
 
 
 	def init_db_cities_data(self):

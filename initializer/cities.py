@@ -1,5 +1,6 @@
 import sqlite3
 import networkx as nx
+import matplotlib.pyplot as plt
 
 class CitiesInitializer:
 
@@ -8,6 +9,7 @@ class CitiesInitializer:
 		self.cursor = self.conn.cursor()
 		self.create_cities_table()
 		self.create_neighbors_table()
+		self.create_distances_table()
 		self.G = self.create_simple_graph()
 
 	def create_cities_table(self):
@@ -130,88 +132,92 @@ class CitiesInitializer:
 						(31, 'Krasnyy Kholm', 'Vesegonsk', 68)
 						]
 
-		self.cursor.executemany("INSERT INTO cities VALUES(?, ?)", cities)
+		self.cursor.executemany("INSERT INTO distances VALUES(?, ?, ?, ?)", distances)
 		self.conn.commit()
 
 	def create_simple_graph(self):
 		self.G = nx.Graph()
 		#1 Torzhok
-		self.G.add_edge('Torzhok', 'Likhoslavl', weight=1)
-		self.G.add_edge('Torzhok', 'Kuvshinovo', weight=1)
-		self.G.add_edge('Torzhok', 'Staritsa', weight=1)
+		self.G.add_edge('Torzhok', 'Likhoslavl', weight=34)
+		self.G.add_edge('Torzhok', 'Kuvshinovo', weight=53)
+		self.G.add_edge('Torzhok', 'Staritsa', weight=59)
 
 		#2 Likhoslavl
-		self.G.add_edge('Likhoslavl', 'Tver', weight=1)
-		self.G.add_edge('Likhoslavl', 'Spirovo', weight=1)
+		self.G.add_edge('Likhoslavl', 'Tver', weight=40)
+		self.G.add_edge('Likhoslavl', 'Spirovo', weight=44)
 
 		#4 Vyshny Volochek
-		self.G.add_edge('Vyshny Volochek', 'Spirovo', weight=1)
-		self.G.add_edge('Vyshny Volochek', 'Bologoye', weight=1)
+		self.G.add_edge('Vyshny Volochek', 'Spirovo', weight=31)
+		self.G.add_edge('Vyshny Volochek', 'Bologoye', weight=45)
 
 		#6 Bologoye
-		self.G.add_edge('Bologoye', 'Firovo', weight=1)
-		self.G.add_edge('Bologoye', 'Udomlya', weight=1)
+		self.G.add_edge('Bologoye', 'Firovo', weight=50)
+		self.G.add_edge('Bologoye', 'Udomlya', weight=56)
 
 		#7 Firovo
-		self.G.add_edge('Firovo', 'Ostashkov', weight=1)
+		self.G.add_edge('Firovo', 'Ostashkov', weight=51)
 
 		#8 Ostashkov
-		self.G.add_edge('Ostashkov', 'Peno', weight=1)
+		self.G.add_edge('Ostashkov', 'Peno', weight=33)
 
 		#9 Peno
-		self.G.add_edge('Peno', 'Selijarovo', weight=1)
-		self.G.add_edge('Peno', 'Andreapol', weight=1)
+		self.G.add_edge('Peno', 'Selijarovo', weight=44)
+		self.G.add_edge('Peno', 'Andreapol', weight=42)
 
 		#10 Selijarovo
-		self.G.add_edge('Selijarovo', 'Kuvshinovo', weight=1)
+		self.G.add_edge('Selijarovo', 'Kuvshinovo', weight=48)
 
 		#12 Staritsa
-		self.G.add_edge('Staritsa', 'Rzhev', weight=1)
+		self.G.add_edge('Staritsa', 'Rzhev', weight=47)
 
 		#13 Rzhev
-		self.G.add_edge('Rzhev', 'Olenino', weight=1)
+		self.G.add_edge('Rzhev', 'Olenino', weight=53)
 
 		#14 Olenino
-		self.G.add_edge('Olenino', 'Nelidovo', weight=1)
+		self.G.add_edge('Olenino', 'Nelidovo', weight=44)
 
 		#15 Nelidovo
-		self.G.add_edge('Nelidovo', 'Zap Dvina', weight=1)
-		self.G.add_edge('Nelidovo', 'Zharkovsky', weight=1)
+		self.G.add_edge('Nelidovo', 'Zap Dvina', weight=43)
+		self.G.add_edge('Nelidovo', 'Zharkovsky', weight=52)
 
 		#16 Zap Dvina
-		self.G.add_edge('Zap Dvina', 'Zharkovsky', weight=1)
+		self.G.add_edge('Zap Dvina', 'Zharkovsky', weight=47)
 
 		#18 Andreapol
-		self.G.add_edge('Andreapol', 'Toropets', weight=1)
+		self.G.add_edge('Andreapol', 'Toropets', weight=42)
 
 		#20 Udomlya
-		self.G.add_edge('Udomlya', 'Maksatiha', weight=1)
+		self.G.add_edge('Udomlya', 'Maksatiha', weight=53)
 
 		#21 Maksatiha
-		self.G.add_edge('Maksatiha', 'Bezhetsk', weight=1)
+		self.G.add_edge('Maksatiha', 'Bezhetsk', weight=48)
 
 		#22 Bezhetsk
-		self.G.add_edge('Bezhetsk', 'Sonkovo', weight=1)
+		self.G.add_edge('Bezhetsk', 'Sonkovo', weight=28)
 
 		#23 Sonkovo
-		self.G.add_edge('Sonkovo', 'Kashin', weight=1)
-		self.G.add_edge('Sonkovo', 'Krasnyy Kholm', weight=1)
+		self.G.add_edge('Sonkovo', 'Kashin', weight=54)
+		self.G.add_edge('Sonkovo', 'Krasnyy Kholm', weight=31)
 
 		#24 Kashin
-		self.G.add_edge('Kashin', 'Kalyazin', weight=1)
+		self.G.add_edge('Kashin', 'Kalyazin', weight=18)
 
 		#25 Kalyazin
-		self.G.add_edge('Kalyazin', 'Savyolovo', weight=1)
+		self.G.add_edge('Kalyazin', 'Savyolovo', weight=54)
 
 		#27 Sandovo
-		self.G.add_edge('Sandovo', 'Krasnyy Kholm', weight=1)
-		self.G.add_edge('Sandovo', 'Vesegonsk', weight=1)
+		self.G.add_edge('Sandovo', 'Krasnyy Kholm', weight=61)
+		self.G.add_edge('Sandovo', 'Vesegonsk', weight=55)
 
 		#28 Krasnyy Kholm
-		self.G.add_edge('Krasnyy Kholm', 'Vesegonsk', weight=1)
+		self.G.add_edge('Krasnyy Kholm', 'Vesegonsk', weight=68)
 
 
-		#nx.draw_networkx(self.G)
+		#nx.draw_networkx(self.G, weight='weight')
+
+		#print(self.G.edges(data=True))
+		#print(len(self.G.edges(data=True)))
+		
 		#plt.show()
 		return self.G
 
