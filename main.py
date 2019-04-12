@@ -20,10 +20,25 @@ class MyWindow(Gtk.Window):
 		self.hbox = Gtk.Box()
 		self.vbox.pack_start(self.hbox, False, False , 0)
 
-		self.entry = Gtk.Entry()
-		self.entry.set_editable(False)
-		self.entry.set_text("TrainSchedule")
-		self.vbox.pack_start(self.entry, True, True, 0)
+		# self.entry = Gtk.Entry()
+		# self.entry.set_editable(False)
+		# self.entry.set_text("TrainSchedule\r\n")
+		# self.vbox.pack_start(self.entry, True, True, 0)
+
+		self.scrolledwindow = Gtk.ScrolledWindow()
+		self.scrolledwindow.set_hexpand(True)
+		self.scrolledwindow.set_vexpand(True)
+
+		self.textview = Gtk.TextView()
+		self.textview.set_editable(False)
+		#self.textview.set_wrap_mode(Gtk.WRAP_WORD)
+		self.textview.props.wrap_mode=2 #2 = Gtk.WRAP_WORD
+		#self.textview.set_justification(Gtk.JUSTIFY_LEFT)
+		self.textview.props.justification=0 #0 = Gtk.JUSTIFY_LEFT
+		self.textbuffer = self.textview.get_buffer()
+		self.textbuffer.set_text("TrainSchedule\r\n")
+		self.scrolledwindow.add(self.textview)
+		self.vbox.pack_start(self.scrolledwindow, True, True, 0)
 
 
 		self.city_store = Gtk.ListStore(str)
@@ -56,13 +71,20 @@ class MyWindow(Gtk.Window):
 			left_city = left_model[left_tree_iter][0]
 		print("Selected: left city=%s" % left_city)
 
+		# self.entry.insert_text(left_city, len(self.entry.get_text()))
+		#self.textview.do_insert_at_cursor(left_city) 
+		#self.textbuffer.set_text(string)
+		end_iter = self.textbuffer.get_end_iter()
+		self.textbuffer.insert(end_iter, "The text to insert at the end")
+		#self.textbuffer.set_text(str(self.textview.get_buffer()) + "TrainSchedule\r\n")
+
 		right_tree_iter = self.city_combo_right.get_active_iter()
 		if right_tree_iter is not None:
 			right_model = self.city_combo_right.get_model()
 			right_city = right_model[right_tree_iter][0]
 		print("Selected: right city=%s" % right_city)
 
-		self.tracerouter.route(left_city, right_city)
+		shortest_path = self.tracerouter.route(left_city, right_city)
 
 	def on_buttonSave_clicked(self, widget):
 		print("Saving...")
