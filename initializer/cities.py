@@ -89,6 +89,50 @@ class CitiesInitializer:
 		self.cursor.executemany("INSERT INTO neighbors VALUES(?, ?, ?, ?)", neighbors)
 		self.conn.commit()
 
+	def create_distances_table(self):
+		self.cursor.execute("DROP TABLE IF EXISTS distances")
+		self.cursor.execute("""CREATE TABLE IF NOT EXISTS 
+							distances (distance_id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE ON CONFLICT REPLACE, 
+										city_name_1 TEXT NOT NULL,
+										city_name_2 TEXT NOT NULL,
+										distance INTEGER NOT NULL);""")
+
+		distances   = [	(1, 'Torzhok', 'Likhoslavl', 34),
+						(2, 'Torzhok', 'Kuvshinovo', 53),
+						(3, 'Torzhok', 'Staritsa', 59),
+						(4, 'Likhoslavl', 'Tver', 40),
+						(5, 'Likhoslavl', 'Spirovo', 44),
+						(6, 'Vyshny Volochek', 'Spirovo', 31),
+						(7, 'Vyshny Volochek', 'Bologoye', 45),
+						(8, 'Bologoye', 'Firovo', 50),
+						(9, 'Bologoye', 'Udomlya', 56),
+						(10, 'Firovo', 'Ostashkov', 51),
+						(11, 'Ostashkov', 'Peno', 33),
+						(12, 'Peno', 'Selijarovo', 44),
+						(13, 'Peno', 'Andreapol', 42),
+						(14, 'Selijarovo', 'Kuvshinovo', 48),
+						(15, 'Staritsa', 'Rzhev', 47),
+						(16, 'Rzhev', 'Olenino', 53),
+						(17, 'Olenino', 'Nelidovo', 44),
+						(18, 'Nelidovo', 'Zap Dvina', 43),
+						(19, 'Nelidovo', 'Zharkovsky', 52),
+						(20, 'Zap Dvina', 'Zharkovsky', 47),
+						(21, 'Andreapol', 'Toropets', 42),
+						(22, 'Udomlya', 'Maksatiha', 53),
+						(23, 'Maksatiha', 'Bezhetsk', 48),
+						(24, 'Bezhetsk', 'Sonkovo', 28),
+						(25, 'Sonkovo', 'Kashin', 54),
+						(26, 'Sonkovo', 'Krasnyy Kholm', 31),
+						(27, 'Kashin', 'Kalyazin', 18),
+						(28, 'Kalyazin', 'Savyolovo', 54),
+						(29, 'Sandovo', 'Krasnyy Kholm', 61),
+						(30, 'Sandovo', 'Vesegonsk', 55),
+						(31, 'Krasnyy Kholm', 'Vesegonsk', 68)
+						]
+
+		self.cursor.executemany("INSERT INTO cities VALUES(?, ?)", cities)
+		self.conn.commit()
+
 	def create_simple_graph(self):
 		self.G = nx.Graph()
 		#1 Torzhok

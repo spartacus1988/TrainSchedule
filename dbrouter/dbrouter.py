@@ -16,11 +16,11 @@ class DBrouter:
         self.conn = sqlite3.connect("TrainSchedule.db")
         self.cursor = self.conn.cursor()
 
-        self.read()
+       #self.read_all()
 
         self.logger.info("DBrouter init finished")
 
-    def read(self):
+    def read_all(self):
         self.cursor.execute("""CREATE TABLE IF NOT EXISTS 
                             routes (route_id INTEGER PRIMARY KEY ON CONFLICT REPLACE, 
                                     left_city TEXT NOT NULL,
@@ -28,12 +28,8 @@ class DBrouter:
                                     start_time TEXT NOT NULL,
                                     end_time TEXT NOT NULL);""")
         self.cursor.execute("SELECT * FROM routes")
-        rows = self.cursor.fetchall()
-        self.route_store = []
-        for row in rows:
-            self.route_store.append([row])
-            print(row)
-        return self.route_store
+        rows = self.cursor.fetchall() 
+        return rows
 
 
 

@@ -71,6 +71,7 @@ class MyWindow(Gtk.Window):
 		self.init_db_route_data()
 		self.route_combo = Gtk.ComboBox.new_with_model_and_entry(self.route_store)
 		self.route_combo.connect("changed", self.on_route_combo_changed)
+		#self.route_combo.set_active(0)
 		self.route_combo.set_entry_text_column(0)
 		#self.route_combo.set_active(0)
 		self.hbox.pack_start(self.route_combo, True, True, 0)
@@ -137,10 +138,14 @@ class MyWindow(Gtk.Window):
 			
 
 	def on_route_combo_changed(self, combo):
+		print("route_combo was changed!!!")
 		tree_iter = combo.get_active_iter()
 		if tree_iter is not None:
 			model = combo.get_model()
 			self.route = model[tree_iter][0]
+
+
+		#!	
 
 
 	def init_db_cities_data(self):
@@ -150,11 +155,11 @@ class MyWindow(Gtk.Window):
 			self.city_store.append([row[1]])
 
 	def init_db_route_data(self):	
-		self.cursor.execute("SELECT * FROM routes")
-		rows = self.cursor.fetchall()
+		rows = self.dbrouter.read_all()
 		for row in rows:
 			self.route_store.append([str(row[0])])
 			#print(row[0])
+		
 
 
 
