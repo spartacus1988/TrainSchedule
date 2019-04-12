@@ -16,6 +16,7 @@ class MyWindow(Gtk.Window):
 		self.dbrouter = DBrouter
 		self.conn = sqlite3.connect("TrainSchedule.db")
 		self.cursor = self.conn.cursor()
+		self.route = None
 		Gtk.Window.__init__(self, title="TrainSchedule")
 		self.set_default_size(640, 480)
 
@@ -101,11 +102,28 @@ class MyWindow(Gtk.Window):
 		time = time.strftime("%H:%M")
 
 
-		if left_city != right_city:
+		if left_city != right_city:		
 			end_iter = self.textbuffer.get_end_iter()
-			self.textbuffer.insert(end_iter, "New route from " + left_city + " to " + right_city + " at " + time + "\r\n")
-			#self.textbuffer.set_text(str(self.textview.get_buffer()) + "TrainSchedule\r\n")
-			self.dbrouter.save(1, left_city, right_city, time, time)
+			if self.route is None and len(self.route_store) == 0:
+				#print("len of self.route_store is " + str(len(self.route_store)))
+				self.route = 1
+				self.route_store.append([str(1)])
+				self.route_combo.set_active(0)
+				self.dbrouter.save(int(self.route), left_city, right_city, time, time)			
+				self.textbuffer.insert(end_iter, "New route from " + left_city +
+				" to " + right_city + " departure at " + time + 
+				" arrival at " + time + " was added to databse\r\n")
+			elif self.route is None and len(self.route_store) > 0:
+				print("len of self.route_store is " + str(len(self.route_store)))
+				print("self.route is " + str(self.route))
+				self.textbuffer.insert(end_iter, "Please select a route\r\n")
+			else:
+				self.dbrouter.save(int(self.route), left_city, right_city, time, time)			
+				self.textbuffer.insert(end_iter, "New route from " + left_city +
+				" to " + right_city + " departure at " + time + 
+				" arrival at " + time + " was added to databse\r\n")
+
+
 
 	def on_buttonRemove_clicked(self, widget):
 		print("Removing...")
@@ -147,7 +165,7 @@ if __name__ == '__main__':
 	tracerouter = Tracerouter(Graph)
 	dbrouter = DBrouter()
 
-	tracerouter.route('Torzhok', 'Kalyazin')
+	#tracerouter.route('Torzhok', 'Kalyazin')
 
 
 	

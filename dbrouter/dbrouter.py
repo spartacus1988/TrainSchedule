@@ -22,7 +22,7 @@ class DBrouter:
 
     def read(self):
         self.cursor.execute("""CREATE TABLE IF NOT EXISTS 
-                            routes (route_id INTEGER PRIMARY KEY UNIQUE ON CONFLICT REPLACE, 
+                            routes (route_id INTEGER PRIMARY KEY ON CONFLICT REPLACE, 
                                     left_city TEXT NOT NULL,
                                     right_city TEXT NOT NULL, 
                                     start_time TEXT NOT NULL,
@@ -38,7 +38,7 @@ class DBrouter:
 
 
     def save(self, routeNumber, startPoint, endPoint, startTime, endTime):
-        self.cursor.execute("INSERT INTO routes VALUES(?, ?, ?, ?, ?)", (routeNumber, startPoint, endPoint, startTime, endTime))
+        self.cursor.execute("INSERT OR REPLACE INTO routes VALUES(?, ?, ?, ?, ?)", (routeNumber, startPoint, endPoint, startTime, endTime))
         self.conn.commit()
 
 
