@@ -96,7 +96,7 @@ class MyWindow(Gtk.Window):
 		if left_city != right_city:		
 			end_iter = self.textbuffer.get_end_iter()
 			if self.route is None and len(self.route_store) == 0:
-				self.textbuffer.insert(end_iter, "Please select a route\r\n")
+				self.textbuffer.insert(end_iter, "Please add first a new route\r\n")
 			elif self.route is None and len(self.route_store) > 0:
 				print("len of self.route_store is " + str(len(self.route_store)))
 				print("self.route is " + str(self.route))
@@ -155,8 +155,24 @@ class MyWindow(Gtk.Window):
 
 	def on_buttonRemove_clicked(self, widget):
 		print("Removing...")
-		#self.dbrouter
-
+		end_iter = self.textbuffer.get_end_iter()
+		if self.route is None and len(self.route_store) == 0:
+			self.textbuffer.insert(end_iter, "Nothing to delete, you first need to add a new route.\r\n")
+		elif self.route is None and len(self.route_store) > 0:
+			print("len of self.route_store is " + str(len(self.route_store)))
+			print("self.route is " + str(self.route))
+			self.textbuffer.insert(end_iter, "Please select a route\r\n")
+		else:
+			focus = self.route_combo.get_active_iter()
+			if focus is not None:
+				self.dbrouter.remove(int(self.route))
+				self.route_store.remove(focus)		
+				self.textbuffer.insert(end_iter, "Route number " + str(self.route) +
+				" was deleted from database\r\n")
+			else:
+				self.textbuffer.insert(end_iter, "Route number " + str(self.route) +
+				" has already been deleted previously\r\n")
+		
 	def on_city_combo_changed(self, combo):
 		tree_iter = combo.get_active_iter()
 		if tree_iter is not None:
