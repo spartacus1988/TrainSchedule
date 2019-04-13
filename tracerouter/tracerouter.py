@@ -17,6 +17,6 @@ class Tracerouter:
         self.logger.info("Tracerouter finished")
 
     def route(self, startPoint, endPoint):
-        self.router.route(startPoint, endPoint)
-
+        shortest_path = self.router.route(startPoint, endPoint)
+        return shortest_path
 

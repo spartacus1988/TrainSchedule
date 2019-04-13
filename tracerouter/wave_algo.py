@@ -13,7 +13,7 @@ class Router:
 
 	def route(self, startPoint, endPoint):		
 		shortest_path = nx.shortest_path(self.G, startPoint, endPoint)
-		print(shortest_path)
+		#print(shortest_path)
 		return shortest_path
 
 
