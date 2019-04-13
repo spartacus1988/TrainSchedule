@@ -94,22 +94,24 @@ class MyWindow(Gtk.Window):
 		
 		shortest_path, start_time, end_time = self.calculator.calculate_data(left_city, right_city)
 
-		if left_city != right_city:		
-			end_iter = self.textbuffer.get_end_iter()
-
-			print("self.route = %s" % str(self.route))
-			print("len(self.route_store) = %s" % str(len(self.route_store)))
-			
+		end_iter = self.textbuffer.get_end_iter()
+		if left_city != right_city:				
+			#print("self.route = %s" % str(self.route))
+			#print("len(self.route_store) = %s" % str(len(self.route_store)))
 			if len(self.route_store) == 0:
 				self.route = None
 				self.textbuffer.insert(end_iter, "Please add first a new route\r\n")
 			elif self.route is None and len(self.route_store) > 0:
 				self.textbuffer.insert(end_iter, "Please select a route\r\n")
 			else:
+				shortest_path_str = "-->".join(str(item) for item in shortest_path)
 				self.dbrouter.save(int(self.route), left_city, right_city, start_time, end_time)			
 				self.textbuffer.insert(end_iter, "Route №" + str(self.route) + " from " + left_city +
+				" through "	+ shortest_path_str + 
 				" to " + right_city + " departure at " + str(start_time) + 
 				" arrival at " + str(end_time) + " was saved in databse\r\n")
+		else:
+			self.textbuffer.insert(end_iter, "Please select a different cities\r\n")
 
 	def get_left_city(self):
 		left_tree_iter = self.city_combo_left.get_active_iter()
@@ -134,17 +136,20 @@ class MyWindow(Gtk.Window):
 		right_city = self.get_right_city()
 
 		shortest_path, start_time, end_time = self.calculator.calculate_data(left_city, right_city)
+		end_iter = self.textbuffer.get_end_iter()
 
-		if left_city != right_city:		
-			end_iter = self.textbuffer.get_end_iter()
+		if left_city != right_city:			
 			if len(self.route_store) == 0:
+				shortest_path_str = "-->".join(str(item) for item in shortest_path)
 				self.route = 1
 				self.route_store.append([str(1)])
 				self.dbrouter.save(int(self.route), left_city, right_city, start_time, end_time)			
 				self.textbuffer.insert(end_iter, "New route number " +'№1' + " from " + left_city +
+				" through "	+ shortest_path_str +
 				" to " + right_city + " departure at " + start_time + 
 				" arrival at " + end_time + " was added to databse\r\n")
 			else:
+				shortest_path_str = "-->".join(str(item) for item in shortest_path)
 				route_numbers_list = list()
 				item = self.route_store.get_iter_first()
 
@@ -157,8 +162,11 @@ class MyWindow(Gtk.Window):
 				self.dbrouter.save(current_number, left_city, right_city, start_time, end_time)
 				self.route_store.append([str(current_number)])			
 				self.textbuffer.insert(end_iter, "New route №" + str(current_number) + " from " + left_city +
+				" through "	+ shortest_path_str +
 				" to " + right_city + " departure at " + str(start_time) + 
 				" arrival at " + str(end_time) + " was added to databse\r\n")
+		else:
+			self.textbuffer.insert(end_iter, "Please select a different cities\r\n")
 
 
 	def on_buttonRemove_clicked(self, widget):

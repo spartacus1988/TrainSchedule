@@ -25,6 +25,7 @@ class Calc:
 		print(shortest_path)
 		start_time = datetime.datetime.now()
 		start_time = start_time.strftime("%H:%M")
+		
 		end_time = datetime.datetime.now()
 		end_time = end_time.strftime("%H:%M")
 
