@@ -114,7 +114,7 @@ class MyWindow(Gtk.Window):
 
 		if left_city != right_city:		
 			end_iter = self.textbuffer.get_end_iter()
-			if self.route is None:
+			if self.route is None and len(self.route_store) == 0:
 				#print("len of self.route_store is " + str(len(self.route_store)))
 				self.route = 1
 				self.route_store.append([str(1)])
@@ -140,8 +140,10 @@ class MyWindow(Gtk.Window):
 				while(item != None):
 					route_numbers_list.append (self.route_store.get_value (item, 0))
 					item = self.route_store.iter_next(item)
-				print("route_numbers_list is " + str(route_numbers_list))
+				route_numbers_list = list(map(int, route_numbers_list))
 
+				print("route_numbers_list is " + str(route_numbers_list))
+		
 				current_number = int(max(route_numbers_list)) + 1
 
 				print("current_number is " + str(current_number))
