@@ -96,15 +96,20 @@ class MyWindow(Gtk.Window):
 
 		if left_city != right_city:		
 			end_iter = self.textbuffer.get_end_iter()
-			if self.route is None and len(self.route_store) == 0:
+
+			print("self.route = %s" % str(self.route))
+			print("len(self.route_store) = %s" % str(len(self.route_store)))
+			
+			if len(self.route_store) == 0:
+				self.route = None
 				self.textbuffer.insert(end_iter, "Please add first a new route\r\n")
 			elif self.route is None and len(self.route_store) > 0:
 				self.textbuffer.insert(end_iter, "Please select a route\r\n")
 			else:
 				self.dbrouter.save(int(self.route), left_city, right_city, start_time, end_time)			
-				self.textbuffer.insert(end_iter, "New route from " + left_city +
-				" to " + right_city + " departure at " + start_time + 
-				" arrival at " + end_time + " was added to databse\r\n")
+				self.textbuffer.insert(end_iter, "Route №" + str(self.route) + " from " + left_city +
+				" to " + right_city + " departure at " + str(start_time) + 
+				" arrival at " + str(end_time) + " was saved in databse\r\n")
 
 	def get_left_city(self):
 		left_tree_iter = self.city_combo_left.get_active_iter()
@@ -136,7 +141,7 @@ class MyWindow(Gtk.Window):
 				self.route = 1
 				self.route_store.append([str(1)])
 				self.dbrouter.save(int(self.route), left_city, right_city, start_time, end_time)			
-				self.textbuffer.insert(end_iter, "New route from " + left_city +
+				self.textbuffer.insert(end_iter, "New route number " +'№1' + " from " + left_city +
 				" to " + right_city + " departure at " + start_time + 
 				" arrival at " + end_time + " was added to databse\r\n")
 			else:
@@ -151,9 +156,9 @@ class MyWindow(Gtk.Window):
 
 				self.dbrouter.save(current_number, left_city, right_city, start_time, end_time)
 				self.route_store.append([str(current_number)])			
-				self.textbuffer.insert(end_iter, "New route from " + left_city +
-				" to " + right_city + " departure at " + start_time + 
-				" arrival at " + end_time + " was added to databse\r\n")
+				self.textbuffer.insert(end_iter, "New route №" + str(current_number) + " from " + left_city +
+				" to " + right_city + " departure at " + str(start_time) + 
+				" arrival at " + str(end_time) + " was added to databse\r\n")
 
 
 	def on_buttonRemove_clicked(self, widget):
@@ -170,10 +175,10 @@ class MyWindow(Gtk.Window):
 			if focus is not None:
 				self.dbrouter.remove(int(self.route))
 				self.route_store.remove(focus)		
-				self.textbuffer.insert(end_iter, "Route number " + str(self.route) +
+				self.textbuffer.insert(end_iter, "Route number №" + str(self.route) +
 				" was deleted from database\r\n")
 			else:
-				self.textbuffer.insert(end_iter, "Route number " + str(self.route) +
+				self.textbuffer.insert(end_iter, "Route number №" + str(self.route) +
 				" has already been deleted previously\r\n")
 		
 	def on_city_combo_changed(self, combo):
