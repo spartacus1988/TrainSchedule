@@ -109,16 +109,18 @@ class MyWindow(Gtk.Window):
 
 	def on_buttonAdd_clicked(self, widget):
 		print("Adding...")
+		print("self.route is " + str(self.route))
+		print("len(self.route_store) is " + str(len(self.route_store)))
 		
 		left_city, right_city, shortest_path, start_time, end_time = self.calculate_data()
 
 		if left_city != right_city:		
 			end_iter = self.textbuffer.get_end_iter()
-			if self.route is None and len(self.route_store) == 0:
+			if len(self.route_store) == 0:
 				#print("len of self.route_store is " + str(len(self.route_store)))
 				self.route = 1
 				self.route_store.append([str(1)])
-				self.route_combo.set_active(0)
+				#self.route_combo.set_active(0)
 				self.dbrouter.save(int(self.route), left_city, right_city, start_time, end_time)			
 				self.textbuffer.insert(end_iter, "New route from " + left_city +
 				" to " + right_city + " departure at " + start_time + 
