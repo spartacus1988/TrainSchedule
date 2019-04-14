@@ -15,9 +15,9 @@ class Router:
 		shortest_path = nx.shortest_path(self.G, startPoint, endPoint)
 		print(shortest_path)
 
-		shortest_path_edge_data = nx.dijkstra_path_length(self.G, source = startPoint, target = endPoint)
-		print("shortest_path_edge_data :" + str(shortest_path_edge_data))
+		shortest_path_edge_distance = nx.dijkstra_path_length(self.G, source = startPoint, target = endPoint)
+		print("shortest_path_edge_distance :" + str(shortest_path_edge_distance))
 
-		return shortest_path
+		return shortest_path, shortest_path_edge_distance
 
 

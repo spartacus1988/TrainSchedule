@@ -8,6 +8,7 @@ from gi.repository import GObject, Gtk, GLib
 
 import sqlite3
 import datetime
+import itertools
 
 
 class MyWindow(Gtk.Window):
@@ -110,6 +111,9 @@ class MyWindow(Gtk.Window):
 				" through "	+ shortest_path_str + 
 				" to " + right_city + " departure at " + str(start_time) + 
 				" arrival at " + str(end_time) + " was saved in databse\r\n")
+
+
+
 		else:
 			self.textbuffer.insert(end_iter, "Please select a different cities\r\n")
 
@@ -147,7 +151,7 @@ class MyWindow(Gtk.Window):
 				self.textbuffer.insert(end_iter, "New route number " +'№1' + " from " + left_city +
 				" through "	+ shortest_path_str +
 				" to " + right_city + " departure at " + start_time + 
-				" arrival at " + end_time + " was added to databse\r\n")
+				" arrival at " + end_time + " was added to databse\r\n\r\n")
 			else:
 				shortest_path_str = "-->".join(str(item) for item in shortest_path)
 				route_numbers_list = list()
@@ -165,29 +169,55 @@ class MyWindow(Gtk.Window):
 				" through "	+ shortest_path_str +
 				" to " + right_city + " departure at " + str(start_time) + 
 				" arrival at " + str(end_time) + " was added to databse\r\n")
+
+				end_iter = self.textbuffer.get_end_iter()
+
+				#map_of_two = map('-->'.join, zip(*([iter(shortest_path)]*2)))
+				#print("map_of_two is " + str(map_of_two))
+
+				#split_list=lambda n: map(None, *[iter(shortest_path)]*2)
+				#split_list = split_list(2)
+
+				#print(list(itertools.chain.from_iterable(shortest_path)))
+
+				i = 0
+				j = 2
+				for item in shortest_path:
+					string_item = "-->".join(str(item) for item in shortest_path[i:j])
+					print("string_item is " + str(string_item))
+					first_city, second_city = string_item.split('-->')
+					time_to_distance_str = self.calculator.get_time(first_city, second_city)
+					self.textbuffer.insert(end_iter, "Time to distance between " + string_item + " is: " + time_to_distance_str + "\r\n")
+					end_iter = self.textbuffer.get_end_iter()
+					i+=1
+					j+=1
+					if j > len(shortest_path):
+						end_iter = self.textbuffer.get_end_iter()
+						self.textbuffer.insert(end_iter, "\r\n")
+						break					
 		else:
-			self.textbuffer.insert(end_iter, "Please select a different cities\r\n")
+			self.textbuffer.insert(end_iter, "Please select a different cities\r\n\r\n")
 
 
 	def on_buttonRemove_clicked(self, widget):
 		print("Removing...")
 		end_iter = self.textbuffer.get_end_iter()
 		if self.route is None and len(self.route_store) == 0:
-			self.textbuffer.insert(end_iter, "Nothing to delete, you first need to add a new route.\r\n")
+			self.textbuffer.insert(end_iter, "Nothing to delete, you first need to add a new route.\r\n\r\n")
 		elif self.route is None and len(self.route_store) > 0:
 			print("len of self.route_store is " + str(len(self.route_store)))
 			print("self.route is " + str(self.route))
-			self.textbuffer.insert(end_iter, "Please select a route\r\n")
+			self.textbuffer.insert(end_iter, "Please select a route\r\n\r\n")
 		else:
 			focus = self.route_combo.get_active_iter()
 			if focus is not None:
 				self.dbrouter.remove(int(self.route))
 				self.route_store.remove(focus)		
 				self.textbuffer.insert(end_iter, "Route number №" + str(self.route) +
-				" was deleted from database\r\n")
+				" was deleted from database\r\n\r\n")
 			else:
 				self.textbuffer.insert(end_iter, "Route number №" + str(self.route) +
-				" has already been deleted previously\r\n")
+				" has already been deleted previously\r\n\r\n")
 		
 	def on_city_combo_changed(self, combo):
 		tree_iter = combo.get_active_iter()
