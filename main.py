@@ -101,21 +101,19 @@ class MyWindow(Gtk.Window):
 			#print("len(self.route_store) = %s" % str(len(self.route_store)))
 			if len(self.route_store) == 0:
 				self.route = None
-				self.textbuffer.insert(end_iter, "Please add first a new route\r\n")
+				self.textbuffer.insert(end_iter, "Please add first a new route\r\n\r\n")
 			elif self.route is None and len(self.route_store) > 0:
-				self.textbuffer.insert(end_iter, "Please select a route\r\n")
+				self.textbuffer.insert(end_iter, "Please select a route\r\n\r\n")
 			else:
 				shortest_path_str = "-->".join(str(item) for item in shortest_path)
 				self.dbrouter.save(int(self.route), left_city, right_city, start_time, end_time)			
 				self.textbuffer.insert(end_iter, "Route №" + str(self.route) + " from " + left_city +
 				" through "	+ shortest_path_str + 
 				" to " + right_city + " departure at " + str(start_time) + 
-				" arrival at " + str(end_time) + " was saved in databse\r\n")
-
-
-
+				" arrival at " + str(end_time) + " was saved in databse\r\n\r\n")
+				self.print_details_of_route(shortest_path)
 		else:
-			self.textbuffer.insert(end_iter, "Please select a different cities\r\n")
+			self.textbuffer.insert(end_iter, "Please select a different cities\r\n\r\n")
 
 	def get_left_city(self):
 		left_tree_iter = self.city_combo_left.get_active_iter()
@@ -151,7 +149,8 @@ class MyWindow(Gtk.Window):
 				self.textbuffer.insert(end_iter, "New route number " +'№1' + " from " + left_city +
 				" through "	+ shortest_path_str +
 				" to " + right_city + " departure at " + start_time + 
-				" arrival at " + end_time + " was added to databse\r\n\r\n")
+				" arrival at " + end_time + " was added to databse\r\n")
+				self.print_details_of_route(shortest_path)
 			else:
 				shortest_path_str = "-->".join(str(item) for item in shortest_path)
 				route_numbers_list = list()
@@ -169,35 +168,49 @@ class MyWindow(Gtk.Window):
 				" through "	+ shortest_path_str +
 				" to " + right_city + " departure at " + str(start_time) + 
 				" arrival at " + str(end_time) + " was added to databse\r\n")
-
-				end_iter = self.textbuffer.get_end_iter()
-
-				#map_of_two = map('-->'.join, zip(*([iter(shortest_path)]*2)))
-				#print("map_of_two is " + str(map_of_two))
-
-				#split_list=lambda n: map(None, *[iter(shortest_path)]*2)
-				#split_list = split_list(2)
-
-				#print(list(itertools.chain.from_iterable(shortest_path)))
-
-				i = 0
-				j = 2
-				for item in shortest_path:
-					string_item = "-->".join(str(item) for item in shortest_path[i:j])
-					print("string_item is " + str(string_item))
-					first_city, second_city = string_item.split('-->')
-					time_to_distance_str = self.calculator.get_time(first_city, second_city)
-					self.textbuffer.insert(end_iter, "Time to distance between " + string_item + " is: " + time_to_distance_str + "\r\n")
-					end_iter = self.textbuffer.get_end_iter()
-					i+=1
-					j+=1
-					if j > len(shortest_path):
-						end_iter = self.textbuffer.get_end_iter()
-						self.textbuffer.insert(end_iter, "\r\n")
-						break					
+				self.print_details_of_route(shortest_path)								
 		else:
 			self.textbuffer.insert(end_iter, "Please select a different cities\r\n\r\n")
 
+	def print_details_of_route(self, shortest_path):
+		end_iter = self.textbuffer.get_end_iter()
+		i = 0
+		j = 2
+		total_time_to_distance = datetime.timedelta(hours=float(0))
+		for item in shortest_path:
+			string_item = "-->".join(str(item) for item in shortest_path[i:j])
+			print("string_item is " + str(string_item))
+			first_city, second_city = string_item.split('-->')
+			time_to_distance_str, time_to_distance = self.calculator.get_time(first_city, second_city)
+			total_time_to_distance += time_to_distance
+			self.textbuffer.insert(end_iter, "Time to distance between " + string_item + " is: " + time_to_distance_str + "\r\n")
+			end_iter = self.textbuffer.get_end_iter()
+			i+=1
+			j+=1
+			if j > len(shortest_path):
+				time_to_stop = 0.084 # 5 min
+				time_to_stops = time_to_stop * (i-1)
+				time_to_stops = datetime.timedelta(hours=float(time_to_stops))
+				total_time = total_time_to_distance + time_to_stops
+
+				time_to_stops_str = (datetime.datetime(2000,1,1)+time_to_stops).strftime("%H:%M")
+				total_time_to_distance_str = (datetime.datetime(2000,1,1)+total_time_to_distance).strftime("%H:%M")
+				total_time_str = (datetime.datetime(2000,1,1)+total_time).strftime("%H:%M")
+
+				end_iter = self.textbuffer.get_end_iter()
+				self.textbuffer.insert(end_iter, "Total time to stops is: " + time_to_stops_str + "\r\n")
+				end_iter = self.textbuffer.get_end_iter()
+				self.textbuffer.insert(end_iter, "Total time to distance is: " + total_time_to_distance_str + "\r\n")
+				end_iter = self.textbuffer.get_end_iter()
+				self.textbuffer.insert(end_iter, "Total time is: " + total_time_str + "\r\n\r\n")
+				break
+			else:
+				end_iter = self.textbuffer.get_end_iter()
+				time_to_stop = 0.084 # 5 min
+				time_to_stop = datetime.timedelta(hours=float(time_to_stop))
+				time_to_stop_str = (datetime.datetime(2000,1,1)+time_to_stop).strftime("%H:%M")
+				#print("time_to_stop is " + str(time_to_stop_str))
+				self.textbuffer.insert(end_iter, "Time to stop is: " + time_to_stop_str + "\r\n")
 
 	def on_buttonRemove_clicked(self, widget):
 		print("Removing...")

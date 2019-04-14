@@ -26,7 +26,7 @@ class Calc:
 		print(shortest_path_edge_distance)
 
 		number_of_stops = len(shortest_path) - 2
-		time_to_stop = 0.0833333 # 5 min
+		time_to_stop = 0.084 # 5 min
 		time_to_stops = time_to_stop * number_of_stops
 		time_to_stops = datetime.timedelta(hours=float(time_to_stops))
 		time_to_stops_str = (datetime.datetime(2000,1,1)+time_to_stops).strftime("%H:%M")
@@ -58,4 +58,4 @@ class Calc:
 		time_to_distance = shortest_path_edge_distance/train_speed
 		time_to_distance = datetime.timedelta(hours=float(time_to_distance))
 		time_to_distance_str = (datetime.datetime(2000,1,1)+time_to_distance).strftime("%H:%M")
-		return time_to_distance_str
+		return time_to_distance_str, time_to_distance
