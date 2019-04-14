@@ -16,12 +16,14 @@ class MyWindow(Gtk.Window):
 	def __init__(self, Tracerouter, DBrouter, Calc):
 		self.tracerouter = Tracerouter
 		self.dbrouter = DBrouter
-		self.calculator = Calc	
+		self.calculator = Calc  
 		self.conn = sqlite3.connect("TrainSchedule.db")
 		self.cursor = self.conn.cursor()
 		self.route = None
 		Gtk.Window.__init__(self, title="TrainSchedule")
 		self.set_default_size(640, 480)
+		#self.cur_time = datetime.timedelta(hours = 0, minutes = 0)
+		#self.cur_time_str = (datetime.datetime(2000,1,1)+self.cur_time).strftime("%H:%M")
 
 		self.vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 		self.add(self.vbox) 
@@ -95,22 +97,38 @@ class MyWindow(Gtk.Window):
 		self.buttonRemove = Gtk.Button(label="Remove")
 		self.buttonRemove.connect("clicked", self.on_buttonRemove_clicked)
 		self.hboxButton.pack_start(self.buttonRemove, True, True, 0)
-
 		self.spinHour = Gtk.SpinButton()
+		self.adjHour  = Gtk.Adjustment(23, 0, 24, 1, 1, 1)
+		self.spinHour.configure(self.adjHour, 1, 0)
 		self.spinHour.set_numeric(True)
 		self.spinHour.set_wrap(True)
-		self.spinHour.set_range(0, 23)
-		self.spinHour.set_increments(1, -1)
-		self.spinHour.set_value(23)
+		#self.spinHour.set_range(0, 23)
+		#self.spinHour.set_increments(1, -1)
+		#self.spinHour.set_value(23)
 		self.hboxSpin.pack_start(self.spinHour, True, True, 0)
 
 		self.spinMin = Gtk.SpinButton()
+		self.adjMin  = Gtk.Adjustment(59, 0, 60, 1, 1, 1)
+		self.spinMin.configure(self.adjMin, 1, 0)
 		self.spinMin.set_numeric(True)
 		self.spinMin.set_wrap(True)
-		self.spinMin.set_range(0, 59)
-		self.spinMin.set_increments(1, -1)
-		self.spinMin.set_value(59)
+		#self.spinMin.set_range(0, 59)
+		#self.spinMin.set_increments(1, -1)
+		#self.spinMin.set_value(59)
 		self.hboxSpin.pack_start(self.spinMin, True, True, 0)
+
+		self.adjHour.connect("value_changed", self.change_adj, self.spinHour, self.spinMin)
+		self.adjMin.connect("value_changed", self.change_adj, self.spinHour, self.spinMin)
+		self.change_adj(self.change_adj, self.spinHour, self.spinMin)
+
+	def change_adj(self, widget, spinHour, spinMin):
+		print("spinHour =%s" % str(spinHour.get_value_as_int()))
+		print("spinMin =%s" % str(spinMin.get_value_as_int()))
+		self.cur_time = datetime.timedelta(hours = spinHour.get_value_as_int(), minutes = spinMin.get_value_as_int())
+		self.cur_time_str = (datetime.datetime(2000,1,1)+self.cur_time).strftime("%H:%M")
+		self.cur_time = datetime.datetime(2000,1,1) + self.cur_time
+		print("cur_time_str is " + str(self.cur_time_str))
+		
 
 	def on_buttonSave_clicked(self, widget):
 		print("Saving...")
@@ -118,10 +136,10 @@ class MyWindow(Gtk.Window):
 		left_city = self.get_left_city()
 		right_city = self.get_right_city()
 		
-		shortest_path, start_time, end_time = self.calculator.calculate_data(left_city, right_city)
+		shortest_path, end_time = self.calculator.calculate_data(self.cur_time, left_city, right_city)
 
 		end_iter = self.textbuffer.get_end_iter()
-		if left_city != right_city:				
+		if left_city != right_city:             
 			#print("self.route = %s" % str(self.route))
 			#print("len(self.route_store) = %s" % str(len(self.route_store)))
 			if len(self.route_store) == 0:
@@ -131,10 +149,10 @@ class MyWindow(Gtk.Window):
 				self.textbuffer.insert(end_iter, "Please select a route\r\n\r\n")
 			else:
 				shortest_path_str = "-->".join(str(item) for item in shortest_path)
-				self.dbrouter.save(int(self.route), left_city, right_city, start_time, end_time)			
+				self.dbrouter.save(int(self.route), left_city, right_city, self.cur_time_str, end_time)            
 				self.textbuffer.insert(end_iter, "Route №" + str(self.route) + " from " + left_city +
-				" through "	+ shortest_path_str + 
-				" to " + right_city + " departure at " + str(start_time) + 
+				" through " + shortest_path_str + 
+				" to " + right_city + " departure at " + str(self.cur_time_str) + 
 				" arrival at " + str(end_time) + " was saved in databse\r\n\r\n")
 				self.print_details_of_route(shortest_path)
 		else:
@@ -162,18 +180,18 @@ class MyWindow(Gtk.Window):
 		left_city = self.get_left_city()
 		right_city = self.get_right_city()
 
-		shortest_path, start_time, end_time = self.calculator.calculate_data(left_city, right_city)
+		shortest_path, end_time = self.calculator.calculate_data(self.cur_time, left_city, right_city)
 		end_iter = self.textbuffer.get_end_iter()
 
-		if left_city != right_city:			
+		if left_city != right_city:         
 			if len(self.route_store) == 0:
 				shortest_path_str = "-->".join(str(item) for item in shortest_path)
 				self.route = 1
 				self.route_store.append([str(1)])
-				self.dbrouter.save(int(self.route), left_city, right_city, start_time, end_time)			
+				self.dbrouter.save(int(self.route), left_city, right_city, self.cur_time_str, end_time)            
 				self.textbuffer.insert(end_iter, "New route number " +'№1' + " from " + left_city +
-				" through "	+ shortest_path_str +
-				" to " + right_city + " departure at " + start_time + 
+				" through " + shortest_path_str +
+				" to " + right_city + " departure at " + self.cur_time_str + 
 				" arrival at " + end_time + " was added to databse\r\n")
 				self.print_details_of_route(shortest_path)
 			else:
@@ -187,13 +205,13 @@ class MyWindow(Gtk.Window):
 				route_numbers_list = list(map(int, route_numbers_list))
 				current_number = int(max(route_numbers_list)) + 1
 
-				self.dbrouter.save(current_number, left_city, right_city, start_time, end_time)
-				self.route_store.append([str(current_number)])			
+				self.dbrouter.save(current_number, left_city, right_city, self.cur_time_str, end_time)
+				self.route_store.append([str(current_number)])          
 				self.textbuffer.insert(end_iter, "New route №" + str(current_number) + " from " + left_city +
-				" through "	+ shortest_path_str +
-				" to " + right_city + " departure at " + str(start_time) + 
+				" through " + shortest_path_str +
+				" to " + right_city + " departure at " + str(self.cur_time_str) + 
 				" arrival at " + str(end_time) + " was added to databse\r\n")
-				self.print_details_of_route(shortest_path)								
+				self.print_details_of_route(shortest_path)                              
 		else:
 			self.textbuffer.insert(end_iter, "Please select a different cities\r\n\r\n")
 
@@ -250,7 +268,7 @@ class MyWindow(Gtk.Window):
 			focus = self.route_combo.get_active_iter()
 			if focus is not None:
 				self.dbrouter.remove(int(self.route))
-				self.route_store.remove(focus)		
+				self.route_store.remove(focus)      
 				self.textbuffer.insert(end_iter, "Route number №" + str(self.route) +
 				" was deleted from database\r\n\r\n")
 			else:
@@ -271,12 +289,16 @@ class MyWindow(Gtk.Window):
 			model = combo.get_model()
 			self.route = model[tree_iter][0]
 
-			city_number_left, city_number_right = self.get_city_number_by_route_id(self.route)
+			city_number_left, city_number_right, start_time, end_time = self.get_city_number_by_route_id(self.route)
 			print("city_number_left is " + str(city_number_left))
 			print("city_number_right is " + str(city_number_right))
 
 			self.city_combo_left.set_active(city_number_left-1)
 			self.city_combo_right.set_active(city_number_right-1)
+
+			hours, minutes = start_time.split(':')
+			self.spinHour.set_value(int(hours))
+			self.spinMin.set_value(int(minutes))
 
 
 	def get_city_number_by_route_id(self, route_id):
@@ -291,7 +313,7 @@ class MyWindow(Gtk.Window):
 		city_list = self.cursor.fetchall() 
 		city_number_right, city_name_right = city_list[0]
 
-		return city_number_left, city_number_right
+		return city_number_left, city_number_right, start_time, end_time
 
 
 	def init_db_cities_data(self):
@@ -300,7 +322,7 @@ class MyWindow(Gtk.Window):
 		for row in rows:
 			self.city_store.append([row[1]])
 
-	def init_db_route_data(self):	
+	def init_db_route_data(self):   
 		rows = self.dbrouter.read_all()
 		for row in rows:
 			self.route_store.append([str(row[0])])

@@ -20,7 +20,7 @@ class Calc:
 
 		self.logger.info("Calc init finished")
 
-	def calculate_data(self, left_city, right_city):		
+	def calculate_data(self, start_time, left_city, right_city):		
 		shortest_path, shortest_path_edge_distance = self.tracerouter.route(left_city, right_city)
 		print(shortest_path)
 		print(shortest_path_edge_distance)
@@ -32,8 +32,8 @@ class Calc:
 		time_to_stops_str = (datetime.datetime(2000,1,1)+time_to_stops).strftime("%H:%M")
 		print("time_to_stops is " + str(time_to_stops_str))
 
-		start_time = datetime.datetime.now()
-		print("start_time is " + str(start_time))
+		#start_time = datetime.datetime.now()
+		#print("start_time is " + str(start_time))
 		start_time_str = start_time.strftime("%H:%M")
 		print("start_time is " + str(start_time_str))
 
@@ -50,7 +50,7 @@ class Calc:
 		#end_time = datetime.datetime.now()
 		#end_time = end_time.strftime("%H:%M")
 
-		return shortest_path, start_time_str, end_time_str 
+		return shortest_path, end_time_str 
 
 	def get_time(self, from_city, to_city):
 		train_speed = 60
@@ -60,4 +60,4 @@ class Calc:
 		time_to_distance_str = (datetime.datetime(2000,1,1)+time_to_distance).strftime("%H:%M")
 		return time_to_distance_str, time_to_distance
 
-	
+
