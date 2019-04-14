@@ -59,3 +59,5 @@ class Calc:
 		time_to_distance = datetime.timedelta(hours=float(time_to_distance))
 		time_to_distance_str = (datetime.datetime(2000,1,1)+time_to_distance).strftime("%H:%M")
 		return time_to_distance_str, time_to_distance
+
+	

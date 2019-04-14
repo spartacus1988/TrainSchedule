@@ -29,15 +29,24 @@ class MyWindow(Gtk.Window):
 		self.hbox = Gtk.Box()
 		self.hboxLabel = Gtk.Box()
 		self.hboxButton = Gtk.Box()
+		self.hboxSpinLabel = Gtk.Box()
+		self.hboxSpin = Gtk.Box()
 		self.lbl_left_city = Gtk.Label("Departure station")
 		self.hboxLabel.pack_start(self.lbl_left_city, True, True, 0)
 		self.lbl_left_city = Gtk.Label("Destination station")
 		self.hboxLabel.pack_start(self.lbl_left_city, True, True, 0)
 		self.lbl_left_city = Gtk.Label("Numbre of route")
+		self.lbl_hours = Gtk.Label("Hours")
+		self.hboxSpinLabel.pack_start(self.lbl_hours, True, True, 0)
+		self.lbl_minutes = Gtk.Label("Minutes")
+		self.hboxSpinLabel.pack_start(self.lbl_minutes, True, True, 0)
+
 		self.hboxLabel.pack_start(self.lbl_left_city, True, True, 0)
 		self.vbox.pack_start(self.hboxLabel, False, False , 0)
 		self.vbox.pack_start(self.hbox, False, False , 0)
 		self.vbox.pack_start(self.hboxButton, False, False , 0)
+		self.vbox.pack_start(self.hboxSpinLabel, False, False , 0)
+		self.vbox.pack_start(self.hboxSpin, False, False , 0)
 
 
 		self.scrolledwindow = Gtk.ScrolledWindow()
@@ -86,6 +95,22 @@ class MyWindow(Gtk.Window):
 		self.buttonRemove = Gtk.Button(label="Remove")
 		self.buttonRemove.connect("clicked", self.on_buttonRemove_clicked)
 		self.hboxButton.pack_start(self.buttonRemove, True, True, 0)
+
+		self.spinHour = Gtk.SpinButton()
+		self.spinHour.set_numeric(True)
+		self.spinHour.set_wrap(True)
+		self.spinHour.set_range(0, 23)
+		self.spinHour.set_increments(1, -1)
+		self.spinHour.set_value(23)
+		self.hboxSpin.pack_start(self.spinHour, True, True, 0)
+
+		self.spinMin = Gtk.SpinButton()
+		self.spinMin.set_numeric(True)
+		self.spinMin.set_wrap(True)
+		self.spinMin.set_range(0, 59)
+		self.spinMin.set_increments(1, -1)
+		self.spinMin.set_value(59)
+		self.hboxSpin.pack_start(self.spinMin, True, True, 0)
 
 	def on_buttonSave_clicked(self, widget):
 		print("Saving...")
