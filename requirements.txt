@@ -39,7 +39,7 @@ MarkupSafe==0.23
 matplotlib==3.0.3
 more-itertools==6.0.0
 networkx==2.2
-numpy==1.16.2
+numpy==1.22.0
 oauthlib==2.1.0
 onboard==1.2.0
 ordereddict==1.1
